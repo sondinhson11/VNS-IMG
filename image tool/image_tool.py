@@ -81,14 +81,18 @@ def process_convert_format(target_format):
                             
                     img.save(out_file, format=target_format.upper() if target_format.lower() != 'jpg' else 'JPEG')
 
-            except Exception as e:
+                except Exception as e:
                 print(f"❌ Lỗi khi xử lý {filepath.name}: {e}")
-                
+
     if count == 0:
         print("\n⚠️ Không tìm thấy ảnh nào trong thư mục 'input'!")
         print("👉 Hãy copy ảnh vào thư mục 'input' rồi chạy lại tool nhé.")
     else:
-        print(f"\n✅ HOÀN THÀNH CHUYỂN ĐỔI CHO {count} ẢNH! (Kiểm tra thư mục 'output')")
+        print(f"\n✅ HOÀN THÀNH CHUYỂN ĐỔI CHO {count} ẢNH!")
+        for filepath in INPUT_DIR.rglob('*'):
+            if filepath.is_file() and filepath.suffix.lower() in ['.png', '.jpg', '.jpeg', '.webp']:
+                filepath.unlink()
+        print("🗑️ Đã xóa ảnh trong thư mục 'input'.")
 
 def process_resize():
     print("\n📐 CHỌN KÍCH THƯỚC RESIZE")
@@ -143,7 +147,11 @@ def process_resize():
         print("\n⚠️ Không tìm thấy ảnh nào trong thư mục 'input'!")
         print("👉 Hãy copy ảnh vào thư mục 'input' rồi chạy lại tool nhé.")
     else:
-        print(f"\n✅ HOÀN THÀNH RESIZE {count} ẢNH VỀ {target_w}x{target_h}! (Kiểm tra thư mục 'output')")
+        print(f"\n✅ HOÀN THÀNH RESIZE {count} ẢNH VỀ {target_w}x{target_h}!")
+        for filepath in INPUT_DIR.rglob('*'):
+            if filepath.is_file() and filepath.suffix.lower() in ['.png', '.jpg', '.jpeg', '.webp']:
+                filepath.unlink()
+        print("🗑️ Đã xóa ảnh trong thư mục 'input'.")
 
 def main():
     # Khởi tạo thư mục ngay khi chạy script

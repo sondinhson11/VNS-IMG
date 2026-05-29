@@ -90,10 +90,65 @@ def process_convert_format(target_format):
     else:
         print(f"\n✅ HOÀN THÀNH CHUYỂN ĐỔI CHO {count} ẢNH! (Kiểm tra thư mục 'output')")
 
+def process_resize():
+    print("\n📐 CHỌN KÍCH THƯỚC RESIZE")
+    print("1. 512 x 512 (Preset)")
+    print("2. 1024 x 1024 (Preset)")
+    print("3. 1920 x 1080 (Preset)")
+    print("4. Tự nhập kích thước")
+    preset_choice = input("👉 Chọn (1, 2, 3 hoặc 4): ").strip()
+
+    if preset_choice == '1':
+        target_w, target_h = 512, 512
+    elif preset_choice == '2':
+        target_w, target_h = 1024, 1024
+    elif preset_choice == '3':
+        target_w, target_h = 1920, 1080
+    elif preset_choice == '4':
+        try:
+            w = input("  Nhập chiều rộng (px): ").strip()
+            h = input("  Nhập chiều cao (px): ").strip()
+            target_w, target_h = int(w), int(h)
+            if target_w <= 0 or target_h <= 0:
+                print("❌ Kích thước phải lớn hơn 0!")
+                return
+        except ValueError:
+            print("❌ Vui lòng nhập số nguyên hợp lệ!")
+            return
+    else:
+        print("❌ Lựa chọn không hợp lệ!")
+        return
+
+    print(f"\n📁 Đang quét ảnh trong thư mục: {INPUT_DIR.absolute()}")
+    count = 0
+
+    for filepath in INPUT_DIR.rglob('*'):
+        if filepath.is_file() and filepath.suffix.lower() in ['.png', '.jpg', '.jpeg', '.webp']:
+            count += 1
+            try:
+                rel_path = filepath.relative_to(INPUT_DIR)
+                out_path = OUTPUT_DIR / rel_path
+                out_path.parent.mkdir(parents=True, exist_ok=True)
+
+                print(f"📐 Đang resize: {filepath.name} -> {target_w}x{target_h}")
+
+                with Image.open(filepath) as img:
+                    resized = img.resize((target_w, target_h), Image.Resampling.LANCZOS)
+                    resized.save(out_path, format=img.format or 'PNG')
+
+            except Exception as e:
+                print(f"❌ Lỗi khi xử lý {filepath.name}: {e}")
+
+    if count == 0:
+        print("\n⚠️ Không tìm thấy ảnh nào trong thư mục 'input'!")
+        print("👉 Hãy copy ảnh vào thư mục 'input' rồi chạy lại tool nhé.")
+    else:
+        print(f"\n✅ HOÀN THÀNH RESIZE {count} ẢNH VỀ {target_w}x{target_h}! (Kiểm tra thư mục 'output')")
+
 def main():
     # Khởi tạo thư mục ngay khi chạy script
     setup_folders()
-    
+
     print("="*50)
     print("  TOOL 2 TRONG 1: XÓA NỀN & CHUYỂN ĐỔI ĐỊNH DẠNG  ")
     print("="*50)
@@ -102,8 +157,9 @@ def main():
     print("="*50)
     print("1. Xóa nền ảnh (Tự động lưu thành PNG)")
     print("2. Chuyển đổi đuôi ảnh (PNG, JPG, WEBP)")
-    
-    choice = input("👉 Chọn tính năng (Nhập 1 hoặc 2): ").strip()
+    print("3. Resize ảnh (Tự động giữ định dạng gốc)")
+
+    choice = input("👉 Chọn tính năng (Nhập 1, 2 hoặc 3): ").strip()
 
     if choice == '1':
         process_remove_background()

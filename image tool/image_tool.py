@@ -150,7 +150,7 @@ def main():
     setup_folders()
 
     print("="*50)
-    print("  TOOL 2 TRONG 1: XÓA NỀN & CHUYỂN ĐỔI ĐỊNH DẠNG  ")
+    print("  TOOL 3 TRONG 1: XÓA NỀN & CHUYỂN ĐỔI ĐỊNH DẠNG & RESIZE")
     print("="*50)
     print("📌 Đã tự động tạo thư mục 'input' và 'output'.")
     print("📌 Hãy đảm bảo bạn đã bỏ ảnh vào thư mục 'input' trước khi chọn.")
@@ -175,6 +175,8 @@ def main():
             process_convert_format(format_map[fmt_choice])
         else:
             print("❌ Lựa chọn không hợp lệ!")
+    elif choice == '3':
+        process_resize()
     else:
         print("❌ Lựa chọn không hợp lệ, vui lòng chạy lại tool.")
 

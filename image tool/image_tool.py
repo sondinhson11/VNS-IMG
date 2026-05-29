@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from PIL import Image
+from PIL import Image, ImageFilter
 
 try:
     from rembg import remove
@@ -81,7 +81,7 @@ def process_convert_format(target_format):
                             
                     img.save(out_file, format=target_format.upper() if target_format.lower() != 'jpg' else 'JPEG')
 
-                except Exception as e:
+            except Exception as e:
                 print(f"❌ Lỗi khi xử lý {filepath.name}: {e}")
 
     if count == 0:
@@ -138,7 +138,8 @@ def process_resize():
 
                 with Image.open(filepath) as img:
                     resized = img.resize((target_w, target_h), Image.Resampling.LANCZOS)
-                    resized.save(out_path, format=img.format or 'PNG')
+                    sharpened = resized.filter(ImageFilter.UnsharpMask(radius=2, percent=150, threshold=3))
+                    sharpened.save(out_path, format=img.format or 'PNG')
 
             except Exception as e:
                 print(f"❌ Lỗi khi xử lý {filepath.name}: {e}")
